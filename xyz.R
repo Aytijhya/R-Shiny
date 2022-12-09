@@ -13,7 +13,7 @@ saveData <- function(data) {
     print('a')
     print(data)
     responses <<- rbind(responses, data)
-    responses=distinct(responses)
+    responses <<- distinct(responses)
   } 
   else {
     responses <<- data
@@ -22,7 +22,7 @@ saveData <- function(data) {
 
 loadData <- function() {
   if (exists("responses")) {
-    responses=dplyr::distinct(responses)
+    responses <<- dplyr::distinct(responses)
     return(responses)
   }
 }
