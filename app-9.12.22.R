@@ -1,6 +1,7 @@
 library(shiny)
 library(png)
 library(dplyr)
+library(knitr)
 
 responses=data.frame()
 coordiante.res=data.frame()
@@ -60,17 +61,34 @@ shinyApp(
         #textInput(inputId = "path", label = "Enter path",  width = "100%"),
         numericInput(inputId = "ss no.", label = "Sreenshot number", NA, min = 1, max = 100),
         textInput("place", "Name of the place", ""),
-        actionButton("submit", "Submit")
+        actionButton("submit", "Submit"),
+        tags$hr(),
+        uiOutput("tab")
       ),
-      mainPanel( plotOutput("plot",click = "Plot_click"),
-                 DT::dataTableOutput("responses", width = 300), verbatimTextOutput("info"),
-                 tags$hr(),
-                 plotOutput("outplot"),
-                 tags$hr())
+      mainPanel( 
+        tabsetPanel(
+          # using iframe along with tags() within tab to display pdf with scroll, height and width could be adjusted
+          tabPanel("Experiment", plotOutput("plot",click = "Plot_click"),
+                   DT::dataTableOutput("responses", width = 300), verbatimTextOutput("info"),
+                   tags$hr(),
+                   plotOutput("outplot"),
+                   tags$hr()),
+          tabPanel("report",uiOutput('markdown'))
+         )
+      )
     )
   )},
   
   server = function(input, output) {
+    
+    output$markdown <- renderUI({
+      HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
+    })
+    url <- a("Project Report", href="https://www.google.com/")
+    
+    output$tab <- renderUI({
+      tagList("URL link:", url)
+    })
     
     output$plot <- renderPlot({
       plot(1:2,ty='n')
