@@ -1,8 +1,6 @@
 library(shiny)
 library(jpeg)
 
-
-
 responses=data.frame()
 coordiante.res=data.frame()
 
@@ -41,14 +39,12 @@ my_plot<-function(clicks)
   rect(y_ordinate-yerr,x_ordinate-xerr,y_ordinate+yerr,x_ordinate+xerr)
   u = abs((fitx$res)/as.numeric(clicks$xlim))
   v = abs((fity$res)/as.numeric(clicks$ylim))
-  if(fitx$rank < (m+n-1)) print("Error:the sreecshots don't make a connected map.")
+  if(fitx$rank < (m+n-1)) print("Error:the sreenshots don't make a connected map.")
   if(max(u)>0.05 | max(v)>0.05) print(paste("Warning:the fiited map is no reliable"))
 }
 
-
 # Define the fields we want to save from the form
 fields <- c("ss no.", "place")
-
 
 shinyApp(
   ui = fluidPage(
@@ -66,7 +62,6 @@ shinyApp(
     )
   ),
   
-  
   server = function(input, output) {
     
     user_url <- reactive({input$path})
@@ -78,7 +73,6 @@ shinyApp(
     
     vals <- reactiveValues(x=NA,y=NA)
     
-    
     #Whenever a field is filled, aggregate all form data
     formData <- reactive({
       x <- round(input$Plot_click$x, 2)
@@ -86,9 +80,6 @@ shinyApp(
       data <- c(input[["ss no."]],input[["place"]],x,y)
       data
     })
-    
-    
-    
     
     # When the Submit button is clicked, save the form data
     observeEvent(input$submit, {
@@ -102,13 +93,11 @@ shinyApp(
       loadData()
     })
     
-    
     output$info <- renderPrint({
       req(input$Plot_click)
       x <- round(input$Plot_click$x, 2)
       y <- round(input$Plot_click$y, 2)
       cat("[", x, ", ", y, "]", sep = "")
     })
-    
   }
 )
